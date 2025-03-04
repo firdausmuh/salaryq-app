@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:calendar_appbar/calendar_appbar.dart';
 import 'package:salaryq_app/pages/main_page.dart';
 
 void main() {
