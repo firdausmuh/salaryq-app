@@ -41,7 +41,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
             Row(
               children: [
                 Transform.scale(
-                  scale: 0.80, // Perbesar switch
+                  scale: 0.80, // Perbesar switc
                   child: Switch(
                     value: isExpense,
                     onChanged: (bool value) {
@@ -95,6 +95,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   } else {
                     if (snapshot.hasData) {
                       if (snapshot.data!.length > 0) {
+                        //list = snapshot.data!.map((e) => e.name).toList();
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: DropdownButton<String>(
