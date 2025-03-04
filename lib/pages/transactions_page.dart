@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:salaryq_app/models/database.dart';
 //import 'package:flutter/src/widgets/framework.dart';
 
 class TransactionsPage extends StatefulWidget {
@@ -10,10 +11,24 @@ class TransactionsPage extends StatefulWidget {
 }
 
 class _TransactionsPageState extends State<TransactionsPage> {
+  final AppDb database = AppDb();
+
   bool isExpense = true;
   List<String> list = ['Makan dan Jajan', 'Transportasi', 'Nonton Film'];
   late String dropDownValue = list.first;
+  TextEditingController amountController = TextEditingController();
   TextEditingController dateController = TextEditingController();
+  TextEditingController detailController = TextEditingController();
+
+  Future insert(
+      int amount, DateTime date, String detail, int categoryId) async {
+    // insert to database
+  }
+
+  Future<List<Category>> getAllCategory(int type) async {
+    return await database.getAllCategoryRepo(type);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +70,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextFormField(
                 keyboardType: TextInputType.number,
+                controller: amountController,
                 decoration: InputDecoration(
                     border: UnderlineInputBorder(), labelText: "Amount"),
               ),
@@ -69,28 +85,51 @@ class _TransactionsPageState extends State<TransactionsPage> {
                 style: TextStyle(fontSize: 16),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: DropdownButton<String>(
-                  value: dropDownValue,
-                  isExpanded: true,
-                  icon: Icon(Icons.arrow_downward),
-                  items: list.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+            FutureBuilder<List<Category>>(
+                future: getAllCategory(2),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {});
-                  }),
-            ),
+                  } else {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.length > 0) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: DropdownButton<String>(
+                              value: dropDownValue,
+                              isExpanded: true,
+                              icon: Icon(Icons.arrow_downward),
+                              items: list.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {});
+                              }),
+                        );
+                      } else {
+                        return Center(
+                          child: Text('Data Kosong'),
+                        );
+                      }
+                    } else {
+                      return Center(
+                        child: Text('Tidak ada data'),
+                      );
+                    }
+                  }
+                }),
             SizedBox(
               height: 10,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
+              child: TextFormField(
                 readOnly: true,
                 controller: dateController,
                 decoration: InputDecoration(labelText: "Enter Date"),
@@ -112,7 +151,25 @@ class _TransactionsPageState extends State<TransactionsPage> {
             SizedBox(
               height: 10,
             ),
-            Center(child: ElevatedButton(onPressed: () {}, child: Text('SAVE')))
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextFormField(
+                controller: detailController,
+                decoration: InputDecoration(
+                    border: UnderlineInputBorder(), labelText: "Detail"),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Center(
+                child: ElevatedButton(
+                    onPressed: () {
+                      print('amount: ${amountController.text}');
+                      print("date: ${dateController.text}");
+                      print("detail: ${detailController.text}");
+                    },
+                    child: Text('SAVE')))
           ],
         )),
       ),
