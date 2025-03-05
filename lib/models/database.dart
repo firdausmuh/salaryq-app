@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:salaryq_app/models/category.dart';
 import 'package:salaryq_app/models/transaction.dart';
+import 'package:salaryq_app/models/transaction_with_category.dart';
 
 part 'database.g.dart';
 
@@ -37,6 +38,22 @@ class AppDb extends _$AppDb {
   // Delete
   Future deleteCategoryRepo(int id) async {
     return (delete(categories)..where((tbl) => tbl.id.equals(id))).go();
+  }
+
+  // TRANSACTION
+
+  Stream<List<TransactionWithCategory>> getTransactionByDate(DateTime date) {
+    final query = (select(transactions).join([
+      innerJoin(categories, categories.id.equalsExp(transactions.category_id))
+    ])
+      ..where(transactions.transaction_date.equals(date)));
+
+    return query.watch().map((rows) {
+      return rows.map((row) {
+        return TransactionWithCategory(
+            row.readTable(transactions), row.readTable(categories));
+      }).toList();
+    });
   }
 }
 
