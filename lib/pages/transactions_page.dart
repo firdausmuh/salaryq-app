@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:salaryq_app/models/database.dart';
-//import 'package:flutter/src/widgets/framework.dart';
+import 'package:salaryq_app/models/transaction_with_category.dart';
 
 class TransactionsPage extends StatefulWidget {
-  const TransactionsPage({super.key});
+  final TransactionWithCategory? transactionWithCategory;
+  const TransactionsPage({Key? key, required this.transactionWithCategory})
+      : super(key: key);
 
   @override
   State<TransactionsPage> createState() => _TransactionsPageState();

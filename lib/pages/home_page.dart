@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salaryq_app/models/database.dart';
 import 'package:salaryq_app/models/transaction_with_category.dart';
+import 'package:salaryq_app/pages/transactions_page.dart';
 
 class HomePage extends StatefulWidget {
   final DateTime selectedDate;
@@ -130,7 +131,19 @@ class _HomePageState extends State<HomePage> {
                                     children: [
                                       Icon(Icons.delete),
                                       SizedBox(width: 10),
-                                      Icon(Icons.edit)
+                                      IconButton(
+                                        icon: Icon(Icons.edit),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TransactionsPage(
+                                                        transactionWithCategory:
+                                                            snapshot
+                                                                .data![Index],
+                                                      )));
+                                        },
+                                      )
                                     ],
                                   ),
                                   title: Text("Rp. " +
