@@ -42,7 +42,8 @@ class AppDb extends _$AppDb {
 
   // TRANSACTION
 
-  Stream<List<TransactionWithCategory>> getTransactionByDate(DateTime date) {
+  Stream<List<TransactionWithCategory>> getTransactionByDateRepo(
+      DateTime date) {
     final query = (select(transactions).join([
       innerJoin(categories, categories.id.equalsExp(transactions.category_id))
     ])

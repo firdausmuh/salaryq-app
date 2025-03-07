@@ -32,7 +32,7 @@ class _MainPageState extends State<Mainpage> {
   void updateView(int index, DateTime? date) {
     setState(() {
       if (date != null) {
-        selectedDate == DateTime.parse(DateFormat('yyyy-MM-dd').format(date));
+        selectedDate = DateTime.parse(DateFormat('yyyy-MM-dd').format(date));
       }
       currentIndex = index;
       _children = [

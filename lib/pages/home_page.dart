@@ -1,4 +1,7 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
+import 'package:salaryq_app/models/database.dart';
+import 'package:salaryq_app/models/transaction_with_category.dart';
 
 class HomePage extends StatefulWidget {
   final DateTime selectedDate;
@@ -9,6 +12,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final AppDb database = AppDb();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -98,39 +103,90 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(16),
             child: Text(
               "Transactions",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
 
+          StreamBuilder<List<TransactionWithCategory>>(
+              stream: database.getTransactionByDateRepo(widget.selectedDate),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.length > 0) {
+                      return ListView.builder(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, Index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Card(
+                                elevation: 10,
+                                child: ListTile(
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.delete),
+                                      SizedBox(width: 10),
+                                      Icon(Icons.edit)
+                                    ],
+                                  ),
+                                  title: Text("Rp. 20.000"),
+                                  subtitle: Text("Makan Siang"),
+                                  leading: Container(
+                                    child:
+                                        Icon(Icons.upload, color: Colors.red),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          });
+                    } else {
+                      return Center(
+                        child: Text("Data masih transaksi kosong"),
+                      );
+                    }
+                  } else {
+                    return Center(
+                      child: Text("Tidak ada data"),
+                    );
+                  }
+                }
+              }),
+
           // list transaksi
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Card(
-              elevation: 10,
-              child: ListTile(
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.delete),
-                    SizedBox(width: 10),
-                    Icon(Icons.edit)
-                  ],
-                ),
-                title: Text("Rp. 20.000"),
-                subtitle: Text("Makan Siang"),
-                leading: Container(
-                  child: Icon(Icons.upload, color: Colors.red),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16),
+          //   child: Card(
+          //     elevation: 10,
+          //     child: ListTile(
+          //       trailing: Row(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: [
+          //           Icon(Icons.delete),
+          //           SizedBox(width: 10),
+          //           Icon(Icons.edit)
+          //         ],
+          //       ),
+          //       title: Text("Rp. 20.000"),
+          //       subtitle: Text("Makan Siang"),
+          //       leading: Container(
+          //         child: Icon(Icons.upload, color: Colors.red),
+          //         decoration: BoxDecoration(
+          //           color: Colors.white,
+          //           borderRadius: BorderRadius.circular(8),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Card(
