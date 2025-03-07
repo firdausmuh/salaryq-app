@@ -117,7 +117,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   } else {
                     if (snapshot.hasData) {
                       if (snapshot.data!.length > 0) {
-                        selectedCategory = snapshot.data!.first;
+                        selectedCategory = (selectedCategory == null)
+                            ? snapshot.data!.first
+                            : selectedCategory;
                         print('APANIH? : ' + snapshot.toString());
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),

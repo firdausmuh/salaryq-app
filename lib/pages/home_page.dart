@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:salaryq_app/models/database.dart';
 import 'package:salaryq_app/models/transaction_with_category.dart';
@@ -106,7 +105,6 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
-
           StreamBuilder<List<TransactionWithCategory>>(
               stream: database.getTransactionByDateRepo(widget.selectedDate),
               builder: (context, snapshot) {
@@ -118,6 +116,7 @@ class _HomePageState extends State<HomePage> {
                   if (snapshot.hasData) {
                     if (snapshot.data!.length > 0) {
                       return ListView.builder(
+                          shrinkWrap: true,
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, Index) {
                             return Padding(
@@ -134,8 +133,14 @@ class _HomePageState extends State<HomePage> {
                                       Icon(Icons.edit)
                                     ],
                                   ),
-                                  title: Text("Rp. 20.000"),
-                                  subtitle: Text("Makan Siang"),
+                                  title: Text("Rp. " +
+                                      snapshot.data![Index].transaction.amount
+                                          .toString()),
+                                  subtitle: Text(snapshot
+                                          .data![Index].category.name +
+                                      " (" +
+                                      snapshot.data![Index].transaction.name +
+                                      ")"),
                                   leading: Container(
                                     child:
                                         Icon(Icons.upload, color: Colors.red),
@@ -160,58 +165,6 @@ class _HomePageState extends State<HomePage> {
                   }
                 }
               }),
-
-          // list transaksi
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16),
-          //   child: Card(
-          //     elevation: 10,
-          //     child: ListTile(
-          //       trailing: Row(
-          //         mainAxisSize: MainAxisSize.min,
-          //         children: [
-          //           Icon(Icons.delete),
-          //           SizedBox(width: 10),
-          //           Icon(Icons.edit)
-          //         ],
-          //       ),
-          //       title: Text("Rp. 20.000"),
-          //       subtitle: Text("Makan Siang"),
-          //       leading: Container(
-          //         child: Icon(Icons.upload, color: Colors.red),
-          //         decoration: BoxDecoration(
-          //           color: Colors.white,
-          //           borderRadius: BorderRadius.circular(8),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Card(
-              elevation: 10,
-              child: ListTile(
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.delete),
-                    SizedBox(width: 10),
-                    Icon(Icons.edit)
-                  ],
-                ),
-                title: Text("Rp. 20.000.000"),
-                subtitle: Text("Gaji Bulanan"),
-                leading: Container(
-                  child: Icon(Icons.upload, color: Colors.green),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-            ),
-          )
         ],
       )),
     );
