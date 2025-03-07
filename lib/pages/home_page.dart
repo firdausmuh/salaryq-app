@@ -129,7 +129,16 @@ class _HomePageState extends State<HomePage> {
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.delete),
+                                      IconButton(
+                                          icon: Icon(Icons.delete),
+                                          onPressed: () async {
+                                            await database
+                                                .deleteTransactionRepo(snapshot
+                                                    .data![Index]
+                                                    .transaction
+                                                    .id);
+                                            setState(() {});
+                                          }),
                                       SizedBox(width: 10),
                                       IconButton(
                                         icon: Icon(Icons.edit),
@@ -155,8 +164,12 @@ class _HomePageState extends State<HomePage> {
                                       snapshot.data![Index].transaction.name +
                                       ")"),
                                   leading: Container(
-                                    child:
-                                        Icon(Icons.upload, color: Colors.red),
+                                    child: (snapshot
+                                                .data![Index].category.type ==
+                                            2)
+                                        ? Icon(Icons.upload, color: Colors.red)
+                                        : Icon(Icons.download,
+                                            color: Colors.green),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(8),
@@ -168,7 +181,7 @@ class _HomePageState extends State<HomePage> {
                           });
                     } else {
                       return Center(
-                        child: Text("Data masih transaksi kosong"),
+                        child: Text("Data transaksi masih kosong"),
                       );
                     }
                   } else {

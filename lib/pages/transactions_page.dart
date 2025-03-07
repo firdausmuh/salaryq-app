@@ -44,11 +44,35 @@ class _TransactionsPageState extends State<TransactionsPage> {
     return await database.getAllCategoryRepo(type);
   }
 
+  // Update for transactions
+  Future update(int transactionId, int amount, int categoryId,
+      DateTime transactionDate, String nameDetail) async {
+    return await database.updateTransactionRepo(
+        transactionId, amount, transactionDate, nameDetail, categoryId);
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
-    type = 2;
+    // TODO: implement initState ; here for made logic for update or insert
+    if (widget.transactionWithCategory != null) {
+      updateTransactionView(widget.transactionWithCategory!);
+    } else {
+      type = 2;
+    }
     super.initState();
+  }
+
+  // Method for update view
+  void updateTransactionView(TransactionWithCategory transactionWithCategory) {
+    amountController.text =
+        transactionWithCategory.transaction.amount.toString();
+    detailController.text = transactionWithCategory.transaction.name;
+    dateController.text = DateFormat('yyyy-MM-dd')
+        .format(transactionWithCategory.transaction.transaction_date);
+    type = transactionWithCategory.category.type;
+    (Type == 2) ? isExpense = true : isExpense = false;
+    selectedCategory = transactionWithCategory.category;
+    // setState(() {});
   }
 
   @override
@@ -195,12 +219,19 @@ class _TransactionsPageState extends State<TransactionsPage> {
             ),
             Center(
                 child: ElevatedButton(
-                    onPressed: () {
-                      insert(
-                          int.parse(amountController.text),
-                          DateTime.parse(dateController.text),
-                          detailController.text,
-                          selectedCategory!.id);
+                    onPressed: () async {
+                      (widget.transactionWithCategory == null)
+                          ? insert(
+                              int.parse(amountController.text),
+                              DateTime.parse(dateController.text),
+                              detailController.text,
+                              selectedCategory!.id)
+                          : await update(
+                              widget.transactionWithCategory!.transaction.id,
+                              int.parse(amountController.text),
+                              selectedCategory!.id,
+                              DateTime.parse(dateController.text),
+                              detailController.text);
                       Navigator.pop(context, true);
                     },
                     child: Text('SAVE')))
