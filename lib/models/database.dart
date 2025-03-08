@@ -73,6 +73,30 @@ class AppDb extends _$AppDb {
   Future deleteTransactionRepo(int id) async {
     return (delete(transactions)..where((tbl) => tbl.id.equals(id))).go();
   }
+
+  // Sum Transaction
+  // Future<int> sumTransactionRepo(DateTime date) async {
+  //   final query = select(transactions)
+  //     ..where((tbl) => tbl.transaction_date.equals(date));
+
+  Future<int> sumTransactionByTypeRepo(int type, DateTime date) async {
+    final startOfMonth = DateTime(date.year, date.month, 1);
+    final endOfMonth = DateTime(date.year, date.month + 1, 0);
+
+    final query = customSelect(
+      'SELECT SUM(amount) as total FROM transactions WHERE category_id IN '
+      '(SELECT id FROM categories WHERE type = ?) '
+      'AND transaction_date BETWEEN ? AND ?',
+      variables: [
+        Variable.withInt(type),
+        Variable.withDateTime(startOfMonth),
+        Variable.withDateTime(endOfMonth),
+      ],
+    );
+
+    final result = await query.getSingle();
+    return result.data['total'] ?? 0;
+  }
 }
 
 LazyDatabase _openConnection() {

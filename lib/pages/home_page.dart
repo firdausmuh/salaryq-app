@@ -14,6 +14,27 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final AppDb database = AppDb();
 
+  int totalIncome = 0;
+  int totalExpense = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTransactionSummary();
+  }
+
+  Future<void> _loadTransactionSummary() async {
+    final income =
+        await database.sumTransactionByTypeRepo(1, widget.selectedDate);
+    final expense =
+        await database.sumTransactionByTypeRepo(2, widget.selectedDate);
+
+    setState(() {
+      totalIncome = income;
+      totalExpense = expense;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -48,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(color: Colors.white, fontSize: 12),
                           ),
                           Text(
-                            "Rp. 3.800.00",
+                            "Rp. ${totalIncome.toString()}",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -62,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                   Row(
                     children: [
                       Container(
-                        child: Icon(Icons.upload, color: Colors.green),
+                        child: Icon(Icons.upload, color: Colors.red),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
@@ -79,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(color: Colors.white, fontSize: 12),
                           ),
                           Text(
-                            "Rp. 3.800.00",
+                            "Rp. ${totalExpense.toString()}",
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
